@@ -1,6 +1,10 @@
 const db = require('../config/db');
 
 const User = {
+    findById: (id, callback) => {
+        db.query('SELECT * FROM users WHERE id = ?', [id], callback);
+    },
+
     findByGoogleId: (googleId, callback) => {
         db.query('SELECT * FROM users WHERE google_id = ?', [googleId], callback);
     },
