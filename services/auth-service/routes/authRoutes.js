@@ -6,7 +6,7 @@ const authMiddleware = require('../middleware/authMiddleware');
 
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
-router.get('/google/callback', 
+router.get('/callback', 
     passport.authenticate('google', { session: false }), 
     authController.googleCallback
 );

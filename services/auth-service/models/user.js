@@ -6,7 +6,7 @@ const User = {
     },
 
     findByGoogleId: (googleId, callback) => {
-        db.query('SELECT * FROM users WHERE google_id = ?', [googleId], callback);
+        db.query('SELECT * FROM users WHERE provider_id = ?', [googleId], callback);
     },
 
     findByEmail: (email, callback) => {
