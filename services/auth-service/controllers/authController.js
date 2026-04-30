@@ -90,12 +90,29 @@ const authController = {
         RefreshToken.create(user.id, refreshToken, (err) => {
             if (err) return res.status(500).json({ message: 'Gagal sinkronisasi OAuth' });
             
-            res.status(200).json({ 
-                message: 'Login Google Berhasil', 
-                accessToken, 
-                refreshToken,
-                profile: { name: user.display_name, email: user.email, photo: user.profile_pic }
-            });
+             res.send(`
+                <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 500px; margin: 50px auto; text-align: center;">
+                    <h1 style="color: #4285F4;">Login Google Berhasil!</h1>
+                    <img src="${user.profile_pic}" width="100" style="border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <h2>Hello, ${user.display_name}!</h2>
+                    <p style="color: #666;">Email: ${user.email}</p>
+                    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+                    
+                    <h3 style="text-align: left;">Access Token (JWT):</h3>
+                    <textarea rows="4" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background: #f9f9f9;" readonly>${accessToken}</textarea>
+                    
+                    <p style="font-size: 12px; color: #999; margin-top: 10px; text-align: left;">
+                        *Gunakan token di atas untuk header Authorization di Postman
+                    </p>
+
+                    <form action="/auth/logout" method="POST" style="margin-top: 20px;">
+                        <input type="hidden" name="token" value="${refreshToken}">
+                        <button type="submit" style="background:#d93025; color:white; border:none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold;">
+                            LOGOUT DARI SISTEM
+                        </button>
+                    </form>
+                </div>
+            `);
         });
     },
 

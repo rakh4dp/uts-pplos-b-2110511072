@@ -11,7 +11,10 @@ app.use(rateLimiter);
 app.use('/auth', authRoutes);
 
 app.get('/', (req, res) => {
-    res.send("API Gateway Running - Port 3000");
+    res.send(`
+        <h1>Sistem Donor Darah</h1>
+        <h2><a href="/auth/google">Login with Google</a></h2>
+    `);
 });
 
 app.listen(PORT, () => {
