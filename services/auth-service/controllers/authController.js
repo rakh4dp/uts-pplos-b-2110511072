@@ -99,14 +99,12 @@ const authController = {
                     <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
                     
                     <h3 style="text-align: left;">Access Token (JWT):</h3>
-                    <!-- Tambahkan id="accessToken" di sini -->
                     <textarea id="accessToken" rows="4" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background: #f9f9f9;" readonly>${accessToken}</textarea>
                     
                     <p style="font-size: 12px; color: #999; margin-top: 10px; text-align: left;">
                         *Gunakan token di atas untuk header Authorization di Postman
                     </p>
 
-                    <!-- Form dihapus, diganti tombol dengan onclick -->
                     <div style="margin-top: 20px;">
                         <button onclick="handleLogout()" style="background:#d93025; color:white; border:none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold;">
                             LOGOUT DARI SISTEM
@@ -116,12 +114,10 @@ const authController = {
 
                 <script>
                     async function handleLogout() {
-                        // Ambil token dari textarea dan variabel backend
                         const tokenAkses = document.getElementById('accessToken').value;
                         const tokenRefresh = "${refreshToken}";
 
                         try {
-                            // Menembak ke Gateway (Port 3000) sesuai instruksi
                             const response = await fetch('http://localhost:3000/auth/logout', {
                                 method: 'POST',
                                 headers: {
@@ -133,7 +129,7 @@ const authController = {
 
                             if (response.ok) {
                                 alert('Logout Berhasil!');
-                                window.location.href = 'http://localhost:3000/'; // Kembali ke entry point
+                                window.location.href = 'http://localhost:3000/'; 
                             } else {
                                 const data = await response.json();
                                 alert('Gagal Logout: ' + data.message);
