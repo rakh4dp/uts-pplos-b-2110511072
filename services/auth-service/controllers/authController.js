@@ -90,7 +90,7 @@ const authController = {
         RefreshToken.create(user.id, refreshToken, (err) => {
             if (err) return res.status(500).json({ message: 'Gagal sinkronisasi OAuth' });
             
-             res.send(`
+            res.send(`
                 <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px; max-width: 500px; margin: 50px auto; text-align: center;">
                     <h1 style="color: #4285F4;">Login Google Berhasil!</h1>
                     <img src="${user.profile_pic}" width="100" style="border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
@@ -99,19 +99,51 @@ const authController = {
                     <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
                     
                     <h3 style="text-align: left;">Access Token (JWT):</h3>
-                    <textarea rows="4" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background: #f9f9f9;" readonly>${accessToken}</textarea>
+                    <!-- Tambahkan id="accessToken" di sini -->
+                    <textarea id="accessToken" rows="4" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; background: #f9f9f9;" readonly>${accessToken}</textarea>
                     
                     <p style="font-size: 12px; color: #999; margin-top: 10px; text-align: left;">
                         *Gunakan token di atas untuk header Authorization di Postman
                     </p>
 
-                    <form action="/auth/logout" method="POST" style="margin-top: 20px;">
-                        <input type="hidden" name="token" value="${refreshToken}">
-                        <button type="submit" style="background:#d93025; color:white; border:none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold;">
+                    <!-- Form dihapus, diganti tombol dengan onclick -->
+                    <div style="margin-top: 20px;">
+                        <button onclick="handleLogout()" style="background:#d93025; color:white; border:none; padding: 10px 20px; border-radius: 5px; cursor: pointer; width: 100%; font-weight: bold;">
                             LOGOUT DARI SISTEM
                         </button>
-                    </form>
+                    </div>
                 </div>
+
+                <script>
+                    async function handleLogout() {
+                        // Ambil token dari textarea dan variabel backend
+                        const tokenAkses = document.getElementById('accessToken').value;
+                        const tokenRefresh = "${refreshToken}";
+
+                        try {
+                            // Menembak ke Gateway (Port 3000) sesuai instruksi
+                            const response = await fetch('http://localhost:3000/auth/logout', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': 'Bearer ' + tokenAkses,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ token: tokenRefresh })
+                            });
+
+                            if (response.ok) {
+                                alert('Logout Berhasil!');
+                                window.location.href = 'http://localhost:3000/'; // Kembali ke entry point
+                            } else {
+                                const data = await response.json();
+                                alert('Gagal Logout: ' + data.message);
+                            }
+                        } catch (error) {
+                            console.error('Error:', error);
+                            alert('Terjadi kesalahan jaringan');
+                        }
+                    }
+                </script>
             `);
         });
     },
