@@ -14,8 +14,9 @@ return new class extends Migration
     Schema::create('donation_history', function (Blueprint $table) {
         $table->id();
         $table->foreignId('donor_id')->constrained('donors')->onDelete('cascade');
+        $table->foreignId('schedule_id')->nullable()->constrained('donation_schedules')->onDelete('set null');
         $table->date('donation_date');
-        $table->integer('quantity_ml'); 
+        $table->integer('quantity_ml');
         $table->text('notes')->nullable();
         $table->timestamps();
         });

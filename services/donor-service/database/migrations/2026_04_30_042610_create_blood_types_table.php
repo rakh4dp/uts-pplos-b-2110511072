@@ -13,8 +13,9 @@ return new class extends Migration
     {
     Schema::create('blood_types', function (Blueprint $table) {
         $table->id();
-        $table->string('type', 5); // Contoh: A, B, AB, O
-        $table->string('rhesus', 5); // Contoh: +, -
+        $table->string('type', 5);
+        $table->string('rhesus', 5);
+        $table->unique(['type', 'rhesus']); 
         $table->timestamps();
         });
     }

@@ -13,9 +13,10 @@ return new class extends Migration
     {
     Schema::create('donors', function (Blueprint $table) {
         $table->id();
+        $table->unsignedBigInteger('user_id')->index();
         $table->foreignId('blood_type_id')->constrained('blood_types')->onDelete('cascade');
         $table->string('name');
-        $table->string('phone');
+        $table->string('phone')->unique();
         $table->text('address');
         $table->timestamps();
         });
