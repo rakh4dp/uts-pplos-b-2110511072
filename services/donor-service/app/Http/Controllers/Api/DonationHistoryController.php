@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Donor;
 use App\Models\DonationHistory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class DonationHistoryController extends Controller
 {
@@ -59,16 +60,24 @@ class DonationHistoryController extends Controller
             $donor->schedules()->where('id', $request->schedule_id)->update(['status' => 'completed']);
         }
 
+        try {
+            $service3Url = env('SERVICE_REQUEST_URL', 'http://localhost:3003/api/v1');
+
+            Http::post($service3Url . '/stocks/sync', [
+                'blood_type_id' => $donor->blood_type_id,
+                'quantity_ml'   => $validated['quantity_ml']
+            ]);
+        } catch (\Exception $e) {
+            
+        }
+
         return response()->json([
             'success' => true,
-            'message' => 'Riwayat donor berhasil dicatat',
+            'message' => 'Riwayat donor berhasil dicatat dan stok disinkronkan',
             'data'    => $history->load('schedule')
         ], 201);
     }
 
-    /**
-     * Menampilkan catatan riwayat
-     */
     public function show(Request $request, Donor $donor, DonationHistory $history)
     {
         if ($donor->user_id !== (int) $request->user_id || $history->donor_id !== $donor->id) {
@@ -81,9 +90,6 @@ class DonationHistoryController extends Controller
         ]);
     }
 
-    /**
-     * Mengupdate catatan riwayat 
-     */
     public function update(Request $request, Donor $donor, DonationHistory $history)
     {
         if ($donor->user_id !== (int) $request->user_id || $history->donor_id !== $donor->id) {
@@ -105,9 +111,6 @@ class DonationHistoryController extends Controller
         ]);
     }
 
-    /**
-     * Menghapus riwayat
-     */
     public function destroy(Request $request, Donor $donor, DonationHistory $history)
     {
         if ($donor->user_id !== (int) $request->user_id || $history->donor_id !== $donor->id) {
