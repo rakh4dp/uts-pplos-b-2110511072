@@ -18,6 +18,16 @@ const Hospital = {
                 else resolve(results[0]);
             });
         });
+    },
+
+    create: (data) => {
+        return new Promise((resolve, reject) => {
+            const query = 'INSERT INTO hospitals (name, address, phone) VALUES (?, ?, ?)';
+            db.query(query, [data.name, data.address, data.phone], (err, results) => {
+                if (err) reject(err);
+                else resolve(results);
+            });
+        });
     }
 };
 

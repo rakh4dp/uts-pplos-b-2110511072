@@ -6,19 +6,42 @@ const requestController = {
     getAllRequests: async (req, res) => {
         try {
             const page = parseInt(req.query.page) || 1;
-            const limit = 10;
+            const limit = parseInt(req.query.limit) || 10; 
             const offset = (page - 1) * limit;
             const status = req.query.status || null;
 
-            const requests = await Request.getAll(limit, offset, status);
+            const { total, data } = await Request.getAll(limit, offset, status);
             
+            const total_pages = Math.ceil(total / limit);
+
             res.status(200).json({
                 message: 'Data permintaan berhasil diambil',
-                page,
-                data: requests
+                metadata: {
+                    current_page: page,
+                    per_page: limit,
+                    total_data: total,   
+                    total_pages: total_pages
+                },data: data 
             });
+        
         } catch (err) {
             res.status(500).json({ message: 'Terjadi kesalahan pada server', error: err.message });
+        }
+    },
+
+    getAllHospitals: async (req, res) => {
+        try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = 5; 
+            const offset = (page - 1) * limit;
+
+            const hospitals = await Hospital.getAll(limit, offset);
+            res.status(200).json({
+                message: 'Daftar Rumah Sakit berhasil diambil',
+                data: hospitals
+            });
+        } catch (err) {
+            res.status(500).json({ message: 'Error', error: err.message });
         }
     },
 
@@ -82,6 +105,53 @@ const requestController = {
             res.status(204).send(); 
         } catch (err) {
             res.status(404).json({ message: 'Data tidak ditemukan' });
+        }
+    },
+
+    getAllStocks: async (req, res) => {
+        try {
+            const stocks = await Stock.getAll();
+            res.status(200).json({
+                message: 'Data stok darah berhasil diambil',
+                data: stocks
+            });
+        } catch (err) {
+            res.status(500).json({ message: 'Error', error: err.message });
+        }
+    },
+    
+    getAllLogs: async (req, res) => {
+        try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = 10;
+            const offset = (page - 1) * limit;
+
+            const { total, data } = await Request.getAllLogs(limit, offset);
+            const total_pages = Math.ceil(total / limit);
+
+            res.status(200).json({
+                message: 'Riwayat aktivitas berhasil diambil',
+                metadata: {
+                    current_page: page,
+                    total_data: total,
+                    total_pages: total_pages
+                },
+                data: data
+            });
+        } catch (err) {
+            res.status(500).json({ message: 'Error', error: err.message });
+        }
+    },
+
+    createHospital: async (req, res) => {
+        try {
+            const { name, address, phone } = req.body;
+            if (!name || !address) return res.status(400).json({ message: 'Nama dan Alamat wajib diisi' });
+
+            const result = await Hospital.create({ name, address, phone });
+            res.status(201).json({ message: 'Rumah Sakit berhasil ditambahkan', id: result.insertId });
+        } catch (err) {
+            res.status(400).json({ message: 'Gagal menambah RS', error: err.message });
         }
     }
 };

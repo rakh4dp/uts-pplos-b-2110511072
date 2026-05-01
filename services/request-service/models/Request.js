@@ -3,20 +3,30 @@ const db = require('../config/db');
 const Request = {
     getAll: (limit, offset, status) => {
         return new Promise((resolve, reject) => {
-            let query = 'SELECT * FROM blood_requests';
+            let queryData = 'SELECT * FROM blood_requests';
+            let queryCount = 'SELECT COUNT(*) as total FROM blood_requests';
             let params = [];
 
             if (status) {
-                query += ' WHERE status = ?';
+                queryData += ' WHERE status = ?';
+                queryCount += ' WHERE status = ?';
                 params.push(status);
             }
 
-            query += ' LIMIT ? OFFSET ?';
-            params.push(limit, offset);
+            queryData += ' LIMIT ? OFFSET ?';
+            const paramsData = [...params, limit, offset];
 
-            db.query(query, params, (err, results) => {
-                if (err) reject(err);
-                else resolve(results);
+            db.query(queryCount, params, (err, countResult) => {
+                if (err) return reject(err);
+                
+                db.query(queryData, paramsData, (err, dataResults) => {
+                    if (err) return reject(err);
+                    
+                    resolve({
+                        total: countResult[0].total,
+                        data: dataResults
+                    });
+                });
             });
         });
     },
@@ -82,6 +92,24 @@ const Request = {
             db.query(query, [id], (err, results) => {
                 if (err) reject(err);
                 else resolve(results);
+            });
+        });
+    },
+
+    getAllLogs: (limit, offset) => {
+        return new Promise((resolve, reject) => {
+            const queryCount = 'SELECT COUNT(*) as total FROM request_logs';
+            const queryData = 'SELECT * FROM request_logs ORDER BY created_at DESC LIMIT ? OFFSET ?';
+
+            db.query(queryCount, (err, countResult) => {
+                if (err) return reject(err);
+                db.query(queryData, [limit, offset], (err, dataResults) => {
+                    if (err) return reject(err);
+                    resolve({
+                        total: countResult[0].total,
+                        data: dataResults
+                    });
+                });
             });
         });
     }
