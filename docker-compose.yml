@@ -1,0 +1,72 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ./mysql-init:/docker-entrypoint-initdb.d
+    networks:
+      - sistem-donor-darah
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "3000:3000"
+    env_file: ./gateway/.env
+    depends_on:
+      - auth-service
+      - donor-service
+      - request-service
+    networks:
+      - sistem-donor-darah
+
+  auth-service:
+    build: ./services/auth-service
+    restart: on-failure
+    ports:
+      - "3001:3001"
+    env_file: ./services/auth-service/.env
+    depends_on:
+      - mysql
+    networks:
+      - sistem-donor-darah
+
+  donor-service:
+    build: ./services/donor-service
+    ports:
+      - "8000:80"
+    env_file: ./services/donor-service/.env
+    depends_on:
+      - mysql
+    networks:
+      - sistem-donor-darah
+
+  request-service:
+    build: ./services/request-service
+    restart: on-failure
+    ports:
+      - "3003:3003"
+    env_file: ./services/request-service/.env
+    depends_on:
+      - mysql
+    networks:
+      - sistem-donor-darah
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin-docker
+    ports:
+      - "8081:80" 
+    environment:
+      - PMA_HOST=mysql 
+      - PMA_PORT=3306
+      - MYSQL_ROOT_PASSWORD= 
+    networks:
+      - sistem-donor-darah
+
+networks:
+  sistem-donor-darah:
+    driver: bridge
