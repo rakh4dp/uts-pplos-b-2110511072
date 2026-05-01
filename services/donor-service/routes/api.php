@@ -11,6 +11,7 @@ Route::prefix('v1')->group(function () {
     Route::get('blood-types', [BloodTypeController::class, 'index']);
     Route::get('donors', [DonorController::class, 'index']);
     Route::get('donors/{donor}', [DonorController::class, 'show']);
+    Route::get('schedules', [DonationScheduleController::class, 'indexAll']); // tambahan
 
     // Protected
     Route::middleware('check.user.id')->group(function () {
