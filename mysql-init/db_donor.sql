@@ -69,12 +69,7 @@ CREATE TABLE `donors` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `donors`
---
 
-INSERT INTO `donors` (`id`, `user_id`, `blood_type_id`, `name`, `phone`, `address`, `created_at`, `updated_at`) VALUES
-(2, 1, 1, 'dwi', '081234567890', 'jaksel', '2026-04-30 05:22:54', '2026-04-30 05:22:54');
 
 
 --
@@ -86,19 +81,6 @@ CREATE TABLE `migrations` (
   `migration` varchar(255) NOT NULL,
   `batch` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `migrations`
---
-
-INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '2026_04_30_042610_create_blood_types_table', 1),
-(2, '2026_04_30_042630_create_donors_table', 1),
-(3, '2026_04_30_042640_create_donation_schedules_table', 1),
-(4, '2026_04_30_042735_create_donation_history_table', 1),
-(5, '2026_04_30_101613_create_personal_access_tokens_table', 1);
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `personal_access_tokens`
