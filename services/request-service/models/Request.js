@@ -62,29 +62,24 @@ const Request = {
     },
 
     updateStatus: (id, newStatus, oldStatus, notes) => {
-        return new Promise((resolve, reject) => {
-            db.beginTransaction((err) => {
-                if (err) reject(err);
+    return new Promise((resolve, reject) => {
+        const updateQuery = 'UPDATE blood_requests SET status = ? WHERE id = ?';
+        db.query(updateQuery, [newStatus, id], (err) => {
+            if (err) return reject(err);
 
-                const updateQuery = 'UPDATE blood_requests SET status = ? WHERE id = ?';
-                db.query(updateQuery, [newStatus, id], (err) => {
-                    if (err) return db.rollback(() => reject(err));
-
-                    const logQuery = 'INSERT INTO request_logs (request_id, status_change, notes) VALUES (?, ?, ?)';
-                    const statusChange = `${oldStatus} to ${newStatus}`;
-                    
-                    db.query(logQuery, [id, statusChange, notes], (err) => {
-                        if (err) return db.rollback(() => reject(err));
-                        
-                        db.commit((err) => {
-                            if (err) return db.rollback(() => reject(err));
-                            resolve({ message: 'Success' });
-                        });
-                    });
-                });
+            const logQuery = 'INSERT INTO request_logs (request_id, status_change, notes) VALUES (?, ?, ?)';
+            const statusChange = `${oldStatus} to ${newStatus}`;
+            
+            db.query(logQuery, [id, statusChange, notes || null], (err) => {
+                if (err) {
+                    return reject(err);
+                }
+                
+                resolve({ message: 'Success' });
             });
         });
-    },
+    });
+},
 
     delete: (id) => {
         return new Promise((resolve, reject) => {

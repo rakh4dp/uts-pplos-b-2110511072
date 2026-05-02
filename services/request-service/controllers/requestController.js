@@ -45,6 +45,18 @@ const requestController = {
         }
     },
 
+    getHospitalById: async (req, res) => {
+        try {
+            const hospital = await Hospital.findById(req.params.id);
+            if (!hospital) {
+                return res.status(404).json({ message: 'Rumah Sakit tidak ditemukan' });
+            }
+            res.status(200).json({ data: hospital });
+        } catch (err) {
+            res.status(500).json({ message: 'Error', error: err.message });
+        }
+    },
+
     createRequest: async (req, res) => {
         try {
             const { hospital_id, blood_type_id, quantity_required, urgency } = req.body;
@@ -101,10 +113,28 @@ const requestController = {
 
     deleteRequest: async (req, res) => {
         try {
-            await Request.delete(req.params.id);
-            res.status(204).send(); 
+            const { id } = req.params;
+
+            const currentData = await Request.getById(id);
+            if (!currentData) {
+                return res.status(404).json({ message: 'Permintaan tidak ditemukan' });
+            }
+
+            if (currentData.status === 'fulfilled') {
+                return res.status(400).json({ 
+                    success: false,
+                    message: 'Permintaan tidak bisa dihapus karena status sudah "fulfilled" (darah sudah terkirim dan stok sudah terpotong).'
+                });
+            }
+
+            await Request.delete(id);
+            
+            res.status(200).json({ 
+                success: true,
+                message: 'Permintaan berhasil dihapus.' 
+            });
         } catch (err) {
-            res.status(404).json({ message: 'Data tidak ditemukan' });
+            res.status(500).json({ message: 'Terjadi kesalahan pada server', error: err.message });
         }
     },
 

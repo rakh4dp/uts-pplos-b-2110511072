@@ -5,6 +5,9 @@ const router = express.Router();
 const requestProxy = createProxyMiddleware({
     target: process.env.REQUEST_SERVICE_URL,
     changeOrigin: true,
+    pathRewrite: {
+        '^/': '/api/v1/',
+    },
     onProxyReq: (proxyReq, req, res) => {
         if (req.user && req.user.id) {
             proxyReq.setHeader('X-User-Id', req.user.id);
