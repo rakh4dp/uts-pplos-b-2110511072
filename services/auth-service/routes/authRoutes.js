@@ -18,7 +18,7 @@ router.post('/refresh-token', authController.refreshToken);
 router.post('/logout', authMiddleware, authController.logout);
 
 router.get('/me', authMiddleware, (req, res) => {
-    res.json({ message: 'Akses diterima', user: req.user });
+    res.json({ message: 'Profil dimuat', user: req.user });
 });
 
 module.exports = router;
