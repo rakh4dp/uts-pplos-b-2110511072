@@ -11,6 +11,11 @@ services:
       - mysql_data:/var/lib/mysql
     networks:
       - sistem-donor-darah
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+      interval: 10s
 
   gateway:
     build: ./gateway
@@ -31,7 +36,8 @@ services:
       - "3001:3001"
     env_file: ./services/auth-service/.env
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - sistem-donor-darah
 
@@ -41,7 +47,8 @@ services:
       - "8000:80"
     env_file: ./services/donor-service/.env
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - sistem-donor-darah
 
@@ -52,7 +59,8 @@ services:
       - "3003:3003"
     env_file: ./services/request-service/.env
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - sistem-donor-darah
 
