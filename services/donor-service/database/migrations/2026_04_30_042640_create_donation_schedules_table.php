@@ -15,7 +15,7 @@ return new class extends Migration
         $table->id();
         $table->foreignId('donor_id')->constrained('donors')->onDelete('cascade');
         $table->date('schedule_date');
-        $table->string('location');
+        $table->unsignedBigInteger('hospital_id');
         $table->enum('status', ['pending', 'completed', 'cancelled'])->default('pending');
         $table->timestamps();
         });

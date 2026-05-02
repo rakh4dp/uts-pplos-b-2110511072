@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DonationSchedule extends Model
 {
-    protected $fillable = ['donor_id', 'schedule_date', 'location', 'status'];
+    protected $fillable = ['donor_id', 'schedule_date', 'hospital_id', 'status'];
 
     public function donor()
     {

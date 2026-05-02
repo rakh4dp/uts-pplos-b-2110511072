@@ -7,6 +7,7 @@ use App\Models\Donor;
 use App\Models\DonationHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class DonationHistoryController extends Controller
 {
@@ -61,14 +62,18 @@ class DonationHistoryController extends Controller
         }
 
         try {
-            $service3Url = env('SERVICE_REQUEST_URL', 'http://localhost:3003/api/v1');
+            $service3Url = env('SERVICE_REQUEST_URL', 'http://request-service:3003/api/v1');
 
-            Http::post($service3Url . '/stocks/sync', [
+            $response = Http::post($service3Url . '/stocks/sync', [
                 'blood_type_id' => $donor->blood_type_id,
                 'quantity_ml'   => $validated['quantity_ml']
             ]);
+
+            if ($response->failed()) {
+                Log::error("Gagal sinkron stok ke Service 3: " . $response->body());
+            }
         } catch (\Exception $e) {
-            
+            Log::error("Koneksi ke Service 3 bermasalah: " . $e->getMessage());
         }
 
         return response()->json([

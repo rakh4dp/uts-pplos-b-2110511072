@@ -9,17 +9,18 @@ class CheckUserIdHeader
 {
     public function handle(Request $request, Closure $next)
     {
-        $userId = $request->header('X-User-Id');
 
-        if (!$userId) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorized'
-            ], 401);
-        }
+    $userId = $request->header('x-user-id') ?: $request->header('X-User-Id');
 
-        $request->merge(['user_id' => $userId]);
-
-        return $next($request);
+    if (!$userId) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthorized',
+            'debug_headers' => $request->headers->all() 
+        ], 401);
+    }
+    
+    $request->merge(['user_id' => $userId]);
+    return $next($request);
     }
 }
