@@ -3,10 +3,10 @@ const router = express.Router();
 const requestController = require('../controllers/requestController');
 
 // Routes Permintaan Darah
-router.get('/requests', requestController.getAllRequests);
-router.post('/requests', requestController.createRequest);
-router.patch('/requests/:id/status', requestController.updateStatus);
-router.delete('/requests/:id', requestController.deleteRequest);
+router.get('/', requestController.getAllRequests);
+router.post('/', requestController.createRequest);
+router.patch('/:id/status', requestController.updateStatus);
+router.delete('/:id', requestController.deleteRequest);
 
 // Routes Log 
 router.get('/logs', requestController.getAllLogs);
@@ -18,4 +18,5 @@ router.post('/stocks/sync', requestController.receiveStockFromDonor);
 // Routes Rumah Sakit 
 router.get('/hospitals', requestController.getAllHospitals);
 router.post('/hospitals', requestController.createHospital);
+router.get('/hospitals/:id', requestController.getHospitalById)
 module.exports = router;
